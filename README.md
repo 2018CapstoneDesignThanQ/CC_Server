@@ -1,4 +1,5 @@
 # CC_Server
+![cc_logo](./img/cc_logo.png)
 * 2018 SWU CapstoneDesign
 * Collective Intelligence : CC
 ## 개요
