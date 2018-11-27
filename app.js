@@ -9,6 +9,16 @@ const express = require('express'),
   routes = require('./routes/index'),
   app = express();
 
+// App Root Path
+global.reqlib = require('app-root-path').require;
+
+// Global Swagger
+global.AVSwagger = reqlib('/config/AVSwagger');
+
+// Swagger API 명세를 볼수 있는 URL을 맵핑
+app.use('/api-docs', AVSwagger.swaggerUi.serve, AVSwagger.swaggerUi.setup(AVSwagger.swaggerSpec));
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
