@@ -48,7 +48,7 @@ router.post('/', async (req, res) => {
             message: "Null Value"
         });
     } else {
-        let select_query = `select user_id from user where mail = ?`;
+        let select_query = `select user_id from users where mail = ?`;
         let check_result = await check.checkDup(select_query, mail);
         if (check_result) {
             res.status(400).json({
@@ -61,7 +61,7 @@ router.post('/', async (req, res) => {
             const salt = await crypto.randomBytes(32);
             const hashed_pw = await crypto.pbkdf2(password, salt.toString('base64'), 100000, 32, 'sha512');
 
-            let insert_query = `insert into user (mail, nickname, password, salt) values (?, ?, ?, ?)`;
+            let insert_query = `insert into users (mail, nickname, password, salt) values (?, ?, ?, ?)`;
             let insert_result = await db.queryParamArr(insert_query, [mail, nickname, hashed_pw.toString('base64'), salt.toString('base64')]);
 
             if (!insert_result) {

@@ -13,7 +13,7 @@ router.post('/', async (req, res, next) => {
         });
     }
     else {
-        let login_query = `select user_id, password, salt from user where mail = ?`;
+        let login_query = `select user_id, password, salt from users where mail = ?`;
         let login_result = await db.queryParamArr(login_query, [mail]);
 
         if (!login_result) {

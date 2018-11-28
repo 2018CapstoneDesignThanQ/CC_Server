@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
             message: "Null Value"
         });
     } else {
-        let select_query = `select user_id from user where mail = ?`;
+        let select_query = `select user_id from users where mail = ?`;
         if (await check.checkDup(select_query, mail)) {
             res.status(400).json({
                 message: "Duplicate Mail"
