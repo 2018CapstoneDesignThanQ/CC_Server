@@ -29,7 +29,6 @@ module.exports = {
         } catch (e) {
             console.log(e);
             next(e);
-
         } finally {
             if (!result) {
                 res.status(500).json({

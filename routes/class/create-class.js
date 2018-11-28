@@ -3,6 +3,7 @@ const router = express.Router();
 const check = require('../../module/check');
 const make = require('../../module/make');
 const jwt = require('../../module/jwt');
+const db = require('../../module/db');
 
 
 router.post('/', async (req, res) => {
@@ -38,7 +39,6 @@ router.post('/', async (req, res) => {
                 let rand_num = await make.makeRandNum();
                 let insert_query = `insert into lecture (lecture_id, user_fk, title, content) values (?, ?, ?, ?)`;
                 let insert_result = await db.queryParamArr(insert_query, [rand_num, decoded_token.user_idx, title, content]);
-
                 if (!insert_result) {
                     res.status(500).json({
                         message: "Internal Server Error"
@@ -52,6 +52,6 @@ router.post('/', async (req, res) => {
             }
         }
     }
-})
+});
 
 module.exports = router;
