@@ -1,6 +1,11 @@
 const check = require('./check');
 
 module.exports = {
+    /**
+     * @name make random number
+     * @description return class code
+     * @returns {Promise<*>}
+     */
     makeRandNum: async () => {
         let check_result = 1;
         let rand_num;
