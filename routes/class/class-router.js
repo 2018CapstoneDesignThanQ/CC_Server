@@ -6,4 +6,9 @@ const create = require('./create-class');
 router.use('/create', create);
 
 
+
+router.get('/', async (req, res) => {
+
+});
+
 module.exports = router;
