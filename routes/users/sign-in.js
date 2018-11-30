@@ -6,6 +6,7 @@ const crypto = require('crypto-promise');
 const jwt = require('../../module/jwt');
 
 router.post('/', async (req, res, next) => {
+
     let {mail, password} = req.body;
     if (check.checkNull([mail, password])) {
         res.status(400).json({
