@@ -5,3 +5,8 @@ const db = require('../../module/db');
 const crypto = require('crypto-promise');
 const jwt = require('../../module/jwt');
 
+router('/', async (req, res) => {
+
+});
+
+module.exports = router;
