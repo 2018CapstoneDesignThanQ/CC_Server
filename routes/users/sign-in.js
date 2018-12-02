@@ -5,6 +5,36 @@ const db = require('../../module/db');
 const crypto = require('crypto-promise');
 const jwt = require('../../module/jwt');
 
+/**
+ * @swagger
+ * /user/signin:
+ *   post:
+ *     tags:
+ *     - USER
+ *     description:
+ *         "- 사용자 로그인"
+ *     produces:
+ *     - application/json
+ *     parameters:
+ *       - name: mail
+ *         description: User Mail
+ *         in:  body
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: User's password.
+ *         in: body
+ *         required: true
+ *         type: string
+ *     responses:
+ *      '200' :
+ *              description : "Success To Sign In"
+ *      '400' :
+ *              description : "Null Value || Fail To Sign In"
+ *      '500' :
+ *              description : "Internal Server Error"
+ */
+
 router.post('/', async (req, res, next) => {
 
     let {mail, password} = req.body;

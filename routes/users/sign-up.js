@@ -35,9 +35,13 @@ const crypto = require('crypto-promise');
  *         in: body
  *         required: true
  *         type: string
-*     responses:
-*     - 200:
-*       description: (SUCCESS) 회원가입 성공
+ *     responses:
+ *      '200' :
+ *              description : "Success To Sign Up"
+ *      '400' :
+ *              description : "Null Value || Duplicate Mail"
+ *      '500' :
+ *              description : "Internal Server Error"
 */
 router.post('/', async (req, res) => {
     let {mail, password, nickname} = req.body;
