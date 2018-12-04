@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
             else {
                 //make Random Number
                 let rand_num = await make.makeRandNum();
-                let insert_query = `insert into lecture (lecture_id, user_fk, title, content) values (?, ?, ?, ?)`;
+                let insert_query = `insert into class (class_id, user_fk, title, content) values (?, ?, ?, ?)`;
                 let insert_result = await db.queryParamArr(insert_query, [rand_num, decoded_token.user_idx, title, content]);
                 if (!insert_result) {
                     res.status(500).json({
