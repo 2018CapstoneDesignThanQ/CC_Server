@@ -4,6 +4,7 @@ const check = require('../../module/check');
 const db = require('../../module/db');
 const crypto = require('crypto-promise');
 const jwt = require('../../module/jwt');
+const socket = require('socket.io');
 
 /**
  * @description socket 통신을 위한 API
