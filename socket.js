@@ -4,6 +4,7 @@ module.exports = (server, app) => {
     const io = SocketIO(server);
     app.set('io', io);
     const room = io.of('/room');
+    console.log('hellohoho');
     room.on('connection', (socket) => {
         console.log('class namespace connection');
         const req = socket.request;
