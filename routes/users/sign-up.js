@@ -3,6 +3,7 @@ const router = express.Router();
 const check = require('../../module/check');
 const db = require('../../module/db');
 const crypto = require('crypto-promise');
+const jwt = require('../../module/jwt');
 
 /**
  * @description 회원가입
@@ -74,9 +75,11 @@ router.post('/', async (req, res) => {
                 });
             }
             else {
+                let token = jwt.sign(insert_result.insertId);
                 res.status(200).send({
-                    message: "Success To Sign Up"
-                })
+                    message: "Success To Sign Up",
+                    token
+                });
             }
         }
     }
