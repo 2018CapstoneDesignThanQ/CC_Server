@@ -11,7 +11,7 @@ router.use('/create', create);
 
 router.get('/room/:id', async (req, res) => {
     let token = req.headers.token;
-    let class_id = req.params.id;
+    let class_id = req.params.id * 1;
     if (!token) {
         res.status(400).send({
             message: "Null Value"
@@ -21,7 +21,7 @@ router.get('/room/:id', async (req, res) => {
 
         if (decoded === 10) {
             res.status(500).send({
-                message: "token err", //여기서 400에러를 주면 클라의 문제니까 메세지만 적절하게 잘 바꿔주면 된다.
+                message: "token err",
                 expired: 1
             });
             return;
@@ -29,7 +29,7 @@ router.get('/room/:id', async (req, res) => {
         //토큰에 에러 있을 때
         if (decoded === -1) {
             res.status(500).send({
-                message: "token err" //여기서 400에러를 주면 클라의 문제니까 메세지만 적절하게 잘 바꿔주면 된다.
+                message: "token err"
             });
         } else {
             let check_room = `select * from class where class_id = ?`;
@@ -41,15 +41,25 @@ router.get('/room/:id', async (req, res) => {
             }
             else if (check_result.length === 0) {
                 res.status(400).json({
-                    message: "This Class Does Not Exist"
+                    message: "This Class  Does Not Exist"
                 });
             }
             else {
-                //질문목록, 댓글목록 주기
-                res.status(200).json({
-                    message: "Success Connection",
-                    data: check_result[0]
-                });
+                //질문목록 주기
+                let select_question = `select a.nickname, b.* from users a, question b where a.user_id = ? and b.class_fk = ? `;
+                let question = await db.queryParamArr(select_question, [decoded.user_idx, class_id]);
+                if (!question) {
+                    res.status(500).json({
+                        message: "Internal Server Error"
+                    });
+                }
+                else {
+                    res.status(200).json({
+                        message: "Success Connection",
+                        classData: check_result[0],
+                        questionData: question
+                    });
+                }
             }
         }
     }
@@ -120,7 +130,6 @@ router.post('/room/:id/question', async (req, res) => {
 });
 
 router.post('/room/:id/reply', async (req, res) => {
-    console.log('hello');
     let token = req.headers.token;
     let class_id = req.params.id;
     let content = req.body.content;
