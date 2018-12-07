@@ -128,7 +128,9 @@ router.post('/room/:id/question', async (req, res) => {
                     const chat = {
                         class : class_id,
                         user : decoded.user_idx,
-                        content : content
+                        content : content,
+                        nickname : "honggildong",
+                        time : now()
                     };
                     //질문정보 담아서 인서트 후 채팅전송
                     console.log(chat);
