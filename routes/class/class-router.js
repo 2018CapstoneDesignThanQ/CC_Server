@@ -47,14 +47,23 @@ router.get('/room/:id', async (req, res) => {
             }
             else {
                 //질문목록 주기
-                let insert_class = `insert into my_class (user_fk, class_fk) values (?, ?)`;
-                let insert_result = await db.queryParamArr(insert_class, [decoded.user_idx, class_id]);
-                if (!insert_result) {
+                let select_myclass = `select user_fk from my_class where user_fk = ?`;
+                let check_myclass = await db.queryParamArr(select_myclass, [decoded.user_idx]);
+                if (!check_myclass) {
                     res.status(500).json({
                         message: "Internal Server Error"
                     });
                 }
                 else {
+                    if(check_myclass.length === 0) {
+                        let insert_class = `insert into my_class (user_fk, class_fk) values (?, ?)`;
+                        let insert_result = await db.queryParamArr(insert_class, [decoded.user_idx, class_id]);
+                        if (!insert_result) {
+                            res.status(500).json({
+                                message: "Internal Server Error"
+                            });
+                        }
+                    }
                     const io = req.app.get('io');
 
                     // let select_question = `select a.nickname, b.* from users a, question b where a.user_id = ? and b.class_fk = ?`;
@@ -130,7 +139,7 @@ router.post('/room/:id/question', async (req, res) => {
                         user : decoded.user_idx,
                         content : content,
                         nickname : "honggildong",
-                        time : now()
+                        time : new Date()
                     };
                     //질문정보 담아서 인서트 후 채팅전송
                     console.log(chat);
