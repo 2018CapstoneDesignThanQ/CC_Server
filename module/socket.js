@@ -19,7 +19,7 @@ module.exports = (server, app) => {
             let class_id = id;
             // console.log(class_id);
             socket.join(class_id);
-            room.to(class_id).emit('question', chat);
+            // room.to(class_id).emit('question', chat);
         });
             socket.on('disconnect', () => {
                 console.log('class namespace disconnection');

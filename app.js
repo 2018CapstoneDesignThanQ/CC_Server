@@ -8,8 +8,8 @@ const express = require('express'),
   bodyParser = require('body-parser'),
 
   routes = require('./routes/index'),
+    cors = require('cors'),
   app = express();
-
 // App Root Path
 global.reqlib = require('app-root-path').require;
 
@@ -31,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors());
 app.use('/', routes);
 
 // catch 404 and forward to error handler
