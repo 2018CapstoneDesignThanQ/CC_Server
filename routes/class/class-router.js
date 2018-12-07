@@ -10,6 +10,7 @@ router.use('/create', create);
 
 
 router.get('/room/:id', async (req, res) => {
+    console.log('여기입니다.');
     let token = req.headers.token;
     let class_id = req.params.id * 1;
     if (!token) {
@@ -46,19 +47,31 @@ router.get('/room/:id', async (req, res) => {
             }
             else {
                 //질문목록 주기
-                let select_question = `select a.nickname, b.* from users a, question b where a.user_id = ? and b.class_fk = ? `;
-                let question = await db.queryParamArr(select_question, [decoded.user_idx, class_id]);
-                if (!question) {
+                let insert_class = `insert into my_class (user_fk, class_fk) values (?, ?)`;
+                let insert_result = await db.queryParamArr(insert_class, [decoded.user_idx, class_id]);
+                if (!insert_result) {
                     res.status(500).json({
                         message: "Internal Server Error"
                     });
                 }
                 else {
-                    res.status(200).json({
-                        message: "Success Connection",
-                        classData: check_result[0],
-                        questionData: question
-                    });
+                    const io = req.app.get('io');
+
+                    // let select_question = `select a.nickname, b.* from users a, question b where a.user_id = ? and b.class_fk = ?`;
+                    let select_question = `select (select count( * ) as like_cnt from question_like as a_like where a_like.question_fk = b.question_id  and a_like.user_fk = ? ) as is_like, a.nickname, b.* from users a, question b where a.user_id = b.user_fk and b.class_fk = ?`;
+                    let question = await db.queryParamArr(select_question, [decoded.user_idx, class_id]);
+                    if (!question) {
+                        res.status(500).json({
+                            message: "Internal Server Error"
+                        });
+                    }
+                    else {
+                        res.status(200).json({
+                            message: "Success Connection",
+                            classData: check_result[0],
+                            questionData: question
+                        });
+                    }
                 }
             }
         }
