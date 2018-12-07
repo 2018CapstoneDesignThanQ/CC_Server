@@ -167,7 +167,7 @@ router.post('/room/:id/reply', async (req, res) => {
                 });
             }
             else {
-                const io = req.app.get('io');
+                // const io = req.app.get('io');
                 let insert_question = `insert into reply (user_fk, class_fk, question_fk, content) values (?, ?, ?, ?)`;
                 let insert_result = await db.queryParamArr(insert_question, [decoded.user_idx, class_id, question_id, content]);
                 if (!insert_result) {
@@ -183,7 +183,7 @@ router.post('/room/:id/reply', async (req, res) => {
                     };
                     //질문정보 담아서 인서트 후 채팅전송
                     console.log(chat);
-                    io.of('/room').to(class_id).emit('question', chat);
+                    // io.of('/room').to(class_id).emit('question', chat);
                     res.status(200).json({
                         message: "Success Upload"
                     });

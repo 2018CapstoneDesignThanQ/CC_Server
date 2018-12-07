@@ -3,8 +3,13 @@ const SocketIO = require('socket.io');
 module.exports = (server, app) => {
     const io = SocketIO(server);
     app.set('io', io);
+    // console.log(io);
+    const chat = io.of('/chat');
     const room = io.of('/room');
     room.on('connection', (socket) => {
+        console.log('hellllllllll');
+    });
+    chat.on('connection', (socket) => {
         console.log('class namespace connection');
         const req = socket.request;
         const {headers: {referer}} = req;
