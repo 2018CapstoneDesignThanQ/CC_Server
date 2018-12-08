@@ -37,7 +37,8 @@ const jwt = require('../../module/jwt');
 
 router.post('/', async (req, res, next) => {
 
-    let {mail, password} = req.body;
+    let {mail, password, push_token} = req.body;
+    push_token = push_token || null;
     if (check.checkNull([mail, password])) {
         res.status(400).json({
             message: "Null Value"
@@ -55,11 +56,20 @@ router.post('/', async (req, res, next) => {
         else if(login_result.length === 1) {
             let hashed_pw = await crypto.pbkdf2(password, login_result[0].salt, 100000, 32, 'sha512');
             if (login_result[0].password === hashed_pw.toString('base64')) {
-                let token = jwt.sign(login_result[0].user_id, login_result[0].nickname);
-                res.status(200).json({
-                    message: "Success To Sign Up",
-                    token
-                })
+                let add_token = `update users set push_token = ? where user_id =?`;
+                let update_result = await db.queryParamArr(add_token, [push_token, login_result[0].user_id]);
+                if (!update_result) {
+                    res.status(500).json({
+                        message: "Internal Server Error"
+                    });
+                }
+                else {
+                    let token = jwt.sign(login_result[0].user_id, login_result[0].nickname);
+                    res.status(200).json({
+                        message: "Success To Sign Up",
+                        token
+                    })
+                }
             }
             else {
                 res.status(400).json({
