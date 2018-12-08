@@ -59,4 +59,57 @@ router.get('/', async (req, res) => {
    }
 });
 
+router.get('/done', async (req, res) => {
+    let token = req.headers.token;
+
+    if (!token) {
+        res.status(400).json({
+            message: "No Token"
+        });
+    }
+    else {
+        let decoded = jwt.verify(token);
+
+        if (decoded === 10) {
+            res.status(500).send({
+                message: "token err",
+                expired: 1
+            });
+            return;
+        }
+        if (decoded === -1) {
+            res.status(500).send({
+                message: "token err"
+            });
+        }
+        else {
+            //내가 개설한 강의(status 구분)
+            let my_class = `select class_id, title from class where user_fk = ? and status = 0`;
+            //내가 수강중인 강의
+            let apply_class = `
+           select a.class_id, a.title, c.nickname 
+           from class a, my_class b, users c 
+           where a.class_id = b.class_fk and b.user_fk = ? and c.user_id = a.user_fk and a.status = 0
+           `;
+
+            let class_data = await db.queryParamArr(my_class, [decoded.user_idx]);
+            let apply_data = await db.queryParamArr(apply_class, [decoded.user_idx]);
+
+            if (!class_data || !apply_data) {
+                res.status(500).json({
+                    message: "Internal Server Error"
+                });
+            }
+            else {
+                res.status(200).json({
+                    message: "Success Get Data",
+                    class_data,
+                    apply_data
+                });
+            }
+        }
+    }
+});
+
+
 module.exports = router;
