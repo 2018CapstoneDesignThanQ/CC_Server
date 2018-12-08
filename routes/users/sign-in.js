@@ -55,7 +55,7 @@ router.post('/', async (req, res, next) => {
         else if(login_result.length === 1) {
             let hashed_pw = await crypto.pbkdf2(password, login_result[0].salt, 100000, 32, 'sha512');
             if (login_result[0].password === hashed_pw.toString('base64')) {
-                let token = jwt.sign(login_result[0].user_id);
+                let token = jwt.sign(login_result[0].user_id, login_result[0].nickname);
                 res.status(200).json({
                     message: "Success To Sign Up",
                     token

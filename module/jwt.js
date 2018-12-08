@@ -4,13 +4,14 @@ const secret_key = require('../config/secret_key').secret;
 
 module.exports = {
     //make token
-    sign: function (user_idx, mail) {
+    sign: function (user_idx, nickname) {
         const options = {
             algorithm: "HS256",
             expiresIn: 60 * 60 * 24 * 30 // 30 days
         };
         const payload = {
-            "user_idx": user_idx
+            "user_idx" : user_idx,
+            "nickname" : nickname
         };
 
         let token = jwt.sign(payload, secret_key, options);

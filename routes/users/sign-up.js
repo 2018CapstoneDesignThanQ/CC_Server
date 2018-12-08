@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
                 });
             }
             else {
-                let token = jwt.sign(insert_result.insertId);
+                let token = jwt.sign(insert_result.insertId, nickname);
                 res.status(200).send({
                     message: "Success To Sign Up",
                     token

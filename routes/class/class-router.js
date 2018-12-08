@@ -69,7 +69,10 @@ router.get('/room/:id', async (req, res) => {
                     // let select_question = `select a.nickname, b.* from users a, question b where a.user_id = ? and b.class_fk = ?`;
                     let select_question = `select (select count( * ) as like_cnt from question_like as a_like where a_like.question_fk = b.question_id  and a_like.user_fk = ? ) as is_like, a.nickname, b.* from users a, question b where a.user_id = b.user_fk and b.class_fk = ?`;
                     let question = await db.queryParamArr(select_question, [decoded.user_idx, class_id]);
-                    if (!question) {
+                    let select_top = `select (select count( * ) as like_cnt from question_like as a_like where a_like.question_fk = b.question_id  and a_like.user_fk = ? ) as is_like, a.nickname, b.* from users a, question b where a.user_id = b.user_fk and b.class_fk = ? order by like_cnt limit 3`;
+                    let top_question = await db.queryParamArr(select_top, [decoded.user_idx, class_id]);
+
+                    if (!question || !top_question) {
                         res.status(500).json({
                             message: "Internal Server Error"
                         });
@@ -78,6 +81,7 @@ router.get('/room/:id', async (req, res) => {
                         res.status(200).json({
                             message: "Success Connection",
                             classData: check_result[0],
+                            topQuestion: top_question,
                             questionData: question
                         });
                     }
@@ -88,7 +92,6 @@ router.get('/room/:id', async (req, res) => {
 });
 
 router.post('/room/:id/question', async (req, res) => {
-    console.log('hello');
     let token = req.headers.token;
     let class_id = req.params.id;
     let content = req.body.content;
@@ -138,7 +141,7 @@ router.post('/room/:id/question', async (req, res) => {
                         class : class_id,
                         user : decoded.user_idx,
                         content : content,
-                        nickname : "honggildong",
+                        nickname : decoded.nickname,
                         time : new Date()
                     };
                     //질문정보 담아서 인서트 후 채팅전송
