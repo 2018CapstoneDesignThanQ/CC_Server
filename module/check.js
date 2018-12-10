@@ -1,4 +1,6 @@
 const db = require('./db');
+const redis =require('../config/redis_pool').client;
+
 module.exports = {
 
     /**
@@ -40,5 +42,33 @@ module.exports = {
             }
             else return 0;
         }
+    },
+
+    checkTop3: async (class_id, question_id) => {
+        const io = req.app.get('io');
+
+        try {
+            let select_like = `select * from question where class_fk = ? order by like_cnt limit 3`;
+            let top_like = await db.queryParamArr(select_like, [class_id]);
+            let length = top_like.length;
+            if (!top_like) {
+                res.status(500).json({
+                    message: "Internal Server Error"
+                });
+            }
+           else {
+               if (redis.get(`${class_id}${length}`).cnt <= top_like[length-1].like_cnt) {
+
+               }
+            }
+        }
+        catch (e) {
+            res.status(500).json({
+                message: "Internal Server Error"
+            });
+        }
+        // finally {
+        //
+        // }
     }
 };

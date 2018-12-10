@@ -39,4 +39,29 @@ module.exports = {
         }
     },
 
+    transactionControll : async (...args) => {
+        // console.log("Transaction start")
+        const connection = await pool.getConnection();
+
+        // console.log("Transaction : beginTransaction")
+        await connection.beginTransaction();
+
+        // console.log("Transaction : result")
+        const result = await args[0](connection, ...args).catch(async (err) => {
+            // console.log("Transaction : rollback")
+            await connection.rollback();
+            // console.log("Transaction : releaseConnection")
+            pool.releaseConnection(connection);
+            throw err
+        });
+
+        // console.log("Transaction : commit")
+        await connection.commit();
+
+        // console.log("Transaction : releaseCOnnection")
+        pool.releaseConnection(connection);
+
+        // console.log("Transaction : return")
+        return result
+    }
 }
