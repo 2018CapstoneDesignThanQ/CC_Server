@@ -62,10 +62,22 @@ router.post('/:class/:question', async (req, res) => {
                     })
                 }
                 else {
+                    let select_top3 = `select * from question order by like_cnt limit3`;
+                    let top3 = await db.queryParamNone(select_top3);
+                    if (!top3) {
+                        res.status(500).json({
+                            message: "Internal Server Error"
+                        })
+                    }
+                    else {
+                        const io = req.app.get('io');
+                        io.of('/room').to(class_id).emit('top3', top3);
+                        let client_token = question_data[0].push_token;
+                        let push_message = '회원님의 게시글에 좋아요가 추가되었습니다';
+                        apn(client_token,200, 1, {body:"(좋아요)"+ emoji.get("strawberry") + `${push_message}`});
+                    }
                     // await checkTop3(class_id);
-                    let client_token = question_data[0].push_token;
-                    let push_message = '회원님의 게시글에 좋아요가 추가되었습니다';
-                    apn(client_token,200, 1, {body:"(좋아요)"+ emoji.get("strawberry") + `${push_message}`});
+
                 }
             }
         }
