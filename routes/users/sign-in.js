@@ -4,7 +4,7 @@ const check = require('../../module/check');
 const db = require('../../module/db');
 const crypto = require('crypto-promise');
 const jwt = require('../../module/jwt');
-// const redis =require('../../config/redis_pool').client;
+const redis =require('../../config/redis_pool').client;
 
 /**
  * @swagger
@@ -66,16 +66,7 @@ router.post('/', async (req, res, next) => {
                 }
                 else {
                     let token = jwt.sign(login_result[0].user_id, login_result[0].nickname);
-                    // redis.hmset(33473, 'question', 114, 'like', 3);
-                    // await redis.set('name', 'zerocho');
-                    // // console.log(redis.get('name'));
-                    // redis.get('name', (err, result) => {
-                    //     console.log(result);
-                    //     res.status(200).json({
-                    //         message: "Success To Sign Up",
-                    //         token
-                    //     });
-                    // });
+
                     res.status(200).json({
                         message: "Success To Sign Up",
                         token
