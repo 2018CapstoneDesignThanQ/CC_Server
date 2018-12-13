@@ -62,7 +62,7 @@ router.post('/:class/:question', async (req, res) => {
                     })
                 }
                 else {
-                    let select_top3 = `select * from question order by like_cnt limit3`;
+                    let select_top3 = `select a.*, b.nickname from question a, users b where b.user_id = a.user_fk order by like_cnt limit 3`;
                     let top3 = await db.queryParamNone(select_top3);
                     if (!top3) {
                         res.status(500).json({
