@@ -1,10 +1,11 @@
+const apnServerKey = require('../config/secretKey').apnSecret;
 module.exports = {
 
     test: function(push_title, push_content, user_id) {
 
         const FCM = require('fcm-push');
         const pool = require('./config/db_pool');
-        const serverKey = 'AAAA__aQAcU:APA91bER0WFNouClivVF-DjTwuRmc1Z5KQhQ3qUVb7kAzuIcWY5kYS_CMx7wDAXjmhnHhYL4BZRDfPHm1zdxMq53pcmIJzdW-l2nZ-zl4VjT0Ywb-GwppGcHq_LIPLKBJsmQ5KXW1PDi';
+        const serverKey = apnServerKey;
         pool.getConnection(function(error, connection){
             if(error) {
                 console.log("getConnection Error" + error);

@@ -31,45 +31,54 @@ router.post('/', async (req, res) => {
             });
         }
         else {
-            let transaction_result = await db.transactionControll(async (connection) => {
-                let update_query = `UPDATE question SET like_cnt = like_cnt + 1 WHERE question_id = ?`;
-                let insert_query = `insert into question_like (user_fk, question_fk) values (?, ?)`;
-                await connection.query(update_query, [question_id]);
-                await connection.query(insert_query, [decoded.user_idx, question_id]);
-
-                let select_question = `select a.*, b.nickname, b.push_token from question a, users b where a.question_id = ? and b.user_id = a.user_fk`;
-                let question_data = await db.queryParamArr(select_question, [question_id, decoded.user_idx]);
-                let select_top3 = `select a.*, b.nickname from question a, users b order by a.like_cnt limit 3`;
-                let top3_data = await db.queryParamNone(select_top3);
-                if (!question_data || !top3_data) {
-                    res.status(500).json({
-                        message: "Internal Server Error"
-                    });
-                }
-                else {
-                    const io = req.app.get('io');
-                    io.of('/room').to(class_id).emit('top3', top3_data);
-                    const chat = {
-                        class : class_id,
-                        user : question_data[0].user_id,
-                        content : question_data[0].content,
-                        nickname : question_data[0].nickname,
-                        time : new Date()
-                    };
-                    //질문정보 담아서 인서트 후 채팅전송
-                    console.log(chat);
-                    io.of('/room').to(class_id).emit('question', chat);
-                    res.status(200).json({
-                        message: "Success Add Like",
-                        data: question_data
-                    });
-                }
-            }).catch(error => {
-                console.log(error);
+            let check_like = `select * from question_like where question_fk = ? and user_fk = ?`;
+            let check_result = await db.queryParamArr(check_like, [question_id, decoded.user_idx]);
+            if (!check_result) {
                 res.status(500).json({
                     message: "Internal Server Error"
-                })
-            });
+                });
+            }
+            else if (check_result.length !== 0) {
+                res.status(400).json({
+                    message: "Already Like"
+                });
+            }
+            else {
+                console.log(check_result);
+                let transaction_result = await db.transactionControll(async (connection) => {
+                    let update_query = `UPDATE question SET like_cnt = like_cnt + 1 WHERE question_id = ?`;
+                    let insert_query = `insert into question_like (user_fk, question_fk) values (?, ?)`;
+                    await connection.query(update_query, [question_id]);
+                    await connection.query(insert_query, [decoded.user_idx, question_id]);
+
+                    let select_question = `select (select count( * ) as like_cnt from question_like as a_like where a_like.question_fk = b.question_id  and a_like.user_fk = ? ) as is_like, a.nickname, b.* from users a, question b where b.question_id = ? and a.user_id = b.user_fk`;
+                    let question_data = await connection.query(select_question, [decoded.user_idx, question_id]);
+                    let select_top3 = `select a.*, b.nickname from question a, users b order by a.like_cnt limit 3`;
+                    let top3_data = await connection.query(select_top3);
+                    if (!question_data || !top3_data) {
+                        res.status(500).json({
+                            message: "Internal Server Error"
+                        });
+                    }
+                    else {
+                        const io = req.app.get('io');
+                        io.of('/room').to(class_id).emit('top3', top3_data);
+                        //질문정보 담아서 인서트 후 채팅전송
+                        console.log(question_data[0].like_cnt);
+                        let add_like = question_data[0].like_cnt;
+                        io.of('/room').to(class_id).emit('addLike', add_like);
+                        res.status(200).json({
+                            message: "Success Add Like",
+                            data: question_data
+                        });
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    res.status(500).json({
+                        message: "Internal Server Error"
+                    })
+                });
+            }
         }
     }
 });
