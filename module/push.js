@@ -1,5 +1,5 @@
-const fcmServerKey = require('../config/secretKey').fcmSecret;
-const apnServerKey = require('../config/secretKey').apnSecret;
+// const fcmServerKey = require('../config/secretKey').fcmSecret;
+// const apnServerKey = require('../config/secretKey').apnSecret;
 const FCM = require('fcm-node');
 const apn = require('apn');
 
