@@ -49,6 +49,16 @@ router.post('/', async (req, res) => {
                 else {
                     const io = req.app.get('io');
                     io.of('/room').to(class_id).emit('top3', top3_data);
+                    const chat = {
+                        class : class_id,
+                        user : question_data[0].user_id,
+                        content : question_data[0].content,
+                        nickname : question_data[0].nickname,
+                        time : new Date()
+                    };
+                    //질문정보 담아서 인서트 후 채팅전송
+                    console.log(chat);
+                    io.of('/room').to(class_id).emit('question', chat);
                     res.status(200).json({
                         message: "Success Add Like",
                         data: question_data
