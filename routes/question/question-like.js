@@ -63,8 +63,6 @@ router.post('/', async (req, res) => {
                     else {
                         const io = req.app.get('io');
                         io.of('/room').to(class_id).emit('top3', top3_data);
-                        //질문정보 담아서 인서트 후 채팅전송
-                        console.log(question_data[0].like_cnt);
                         let add_like = question_data[0].like_cnt;
                         io.of('/room').to(class_id).emit('addLike', add_like);
                         res.status(200).json({
