@@ -47,14 +47,15 @@ router.get('/room/:id', async (req, res) => {
             }
             else {
                 //질문목록 주기
-                let select_myclass = `select user_fk from my_class where user_fk = ?`;
-                let check_myclass = await db.queryParamArr(select_myclass, [decoded.user_idx]);
+                let select_myclass = `select user_fk from my_class where user_fk = ? and class_fk = ?`;
+                let check_myclass = await db.queryParamArr(select_myclass, [decoded.user_idx, class_id]);
                 if (!check_myclass) {
                     res.status(500).json({
                         message: "Internal Server Error"
                     });
                 }
                 else {
+                    console.log(check_myclass);
                     if(check_myclass.length === 0) {
                         let insert_class = `insert into my_class (user_fk, class_fk) values (?, ?)`;
                         let insert_result = await db.queryParamArr(insert_class, [decoded.user_idx, class_id]);
