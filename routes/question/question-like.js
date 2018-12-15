@@ -63,7 +63,10 @@ router.post('/', async (req, res) => {
                     else {
                         const io = req.app.get('io');
                         io.of('/room').to(class_id).emit('top3', top3_data);
-                        let add_like = question_data[0].like_cnt;
+                        let add_like = {
+                            like_cnt : question_data[0].like_cnt,
+                            question_id : question_id
+                        };
 
                         if (add_like>3) {
                             const alert_question = {
@@ -75,8 +78,8 @@ router.post('/', async (req, res) => {
                         }
                         io.of('/room').to(class_id).emit('addLike', add_like);
                         res.status(200).json({
-                            message: "Success Add Like",
-                            data: question_data
+                            message: "Success Add Like"
+                            // data: question_data
                         });
                     }
                 }).catch(error => {

@@ -139,6 +139,7 @@ router.post('/room/:id/question', async (req, res) => {
                 else {
                     const chat = {
                         class : class_id,
+                        question : insert_result.insert_Id,
                         user : decoded.user_idx,
                         content : content,
                         nickname : decoded.nickname,
