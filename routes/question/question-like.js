@@ -64,6 +64,15 @@ router.post('/', async (req, res) => {
                         const io = req.app.get('io');
                         io.of('/room').to(class_id).emit('top3', top3_data);
                         let add_like = question_data[0].like_cnt;
+
+                        if (add_like>3) {
+                            const alert_question = {
+                                question_id : question_id,
+                                title : question_data[0].title,
+                                content : question_data[0].content
+                            }
+                            io.of('/room').to(class_id).emit('alertWeb', alert_question);
+                        }
                         io.of('/room').to(class_id).emit('addLike', add_like);
                         res.status(200).json({
                             message: "Success Add Like",
