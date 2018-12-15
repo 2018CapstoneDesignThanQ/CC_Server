@@ -137,7 +137,7 @@ router.post('/room/:id/question', async (req, res) => {
                     });
                 }
                 else {
-                    console.log(insert_result.insertId);
+                    console.log(decoded);
                     const chat = {
                         class : class_id,
                         question : insert_result.insertId,

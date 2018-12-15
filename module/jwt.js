@@ -13,7 +13,7 @@ module.exports = {
             "user_idx" : user_idx,
             "nickname" : nickname
         };
-
+        console.log(payload);
         let token = jwt.sign(payload, secret_key, options);
         return token;
     },
