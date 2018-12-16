@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
             }
             else {
                 res.status(200).json({
-                    message: "Success Get User Info",
+                    message: "Success Get My Question",
                     data: my_question
                 });
             }
