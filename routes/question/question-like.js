@@ -53,8 +53,8 @@ router.post('/', async (req, res) => {
 
                     let select_question = `select (select count( * ) as like_cnt from question_like as a_like where a_like.question_fk = b.question_id  and a_like.user_fk = ? ) as is_like, a.nickname, b.* from users a, question b where b.question_id = ? and a.user_id = b.user_fk`;
                     let question_data = await connection.query(select_question, [decoded.user_idx, question_id]);
-                    let select_top3 = `select a.*, b.nickname from question a, users b order by a.like_cnt limit 3`;
-                    let top3_data = await connection.query(select_top3);
+                    let select_top3 = `select a.*, b.nickname from question a, users b where class_fk = ? order by a.like_cnt desc limit 3`;
+                    let top3_data = await connection.query(select_top3, [class_id]);
                     if (!question_data || !top3_data) {
                         res.status(500).json({
                             message: "Internal Server Error"
